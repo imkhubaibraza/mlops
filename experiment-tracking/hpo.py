@@ -24,16 +24,25 @@ def run(data_path, num_trials):
     X_valid, y_valid = load_pickle(os.path.join(data_path, "valid.pkl"))
 
     def objective(params):
+        # mlflow.autolog()
+        with mlflow.start_run():
+            mlflow.set_tag('model', 'random forest')
+            mlflow.log_params(params)
+            rf = RandomForestRegressor(**params)
+            rf.fit(X_train, y_train)
+            y_pred = rf.predict(X_valid)
+            y__train_pred = rf.predict(X_train)
+            rmse = mean_squared_error(y_valid, y_pred, squared=False)
+            rmse_train = mean_squared_error(y_train, y__train_pred, squared=False)
+            mlflow.log_metric("rmse" , rmse)
+            # mlflow.log_metric("rmse_train" , rmse_train)
+            return {'loss': rmse, 'status': STATUS_OK }
+    
+    # Out of objective fucntion
 
-        rf = RandomForestRegressor(**params)
-        rf.fit(X_train, y_train)
-        y_pred = rf.predict(X_valid)
-        rmse = mean_squared_error(y_valid, y_pred, squared=False)
-
-        return {'loss': rmse, 'status': STATUS_OK}
-
+    
     search_space = {
-        'max_depth': scope.int(hp.quniform('max_depth', 1, 20, 1)),
+        'max_depth': scope.int(hp.quniform('max_depth', 1, 40, 1)),
         'n_estimators': scope.int(hp.quniform('n_estimators', 10, 50, 1)),
         'min_samples_split': scope.int(hp.quniform('min_samples_split', 2, 10, 1)),
         'min_samples_leaf': scope.int(hp.quniform('min_samples_leaf', 1, 4, 1)),
@@ -65,5 +74,6 @@ if __name__ == '__main__':
         help="the number of parameter evaluations for the optimizer to explore."
     )
     args = parser.parse_args()
+    print(args)
 
-    run(args.data_path, args.max_evals)
+    run(args.data_path, int(args.max_evals))
