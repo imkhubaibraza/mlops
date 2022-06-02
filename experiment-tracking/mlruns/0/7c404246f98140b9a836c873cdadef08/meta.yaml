@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ubuntu/notebooks/experiment-tracking/mlruns/0/7c404246f98140b9a836c873cdadef08/artifacts
+end_time: 1654006047187
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 7c404246f98140b9a836c873cdadef08
+run_uuid: 7c404246f98140b9a836c873cdadef08
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1654006022080
+status: 3
+tags: []
+user_id: ubuntu
